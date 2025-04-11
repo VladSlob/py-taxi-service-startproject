@@ -1,19 +1,24 @@
 from django.contrib import admin
-from .models import Driver, Manufacturer, Car
+from django.contrib.auth.admin import UserAdmin
+
+from taxi.models import Driver, Car, Manufacturer
+
+
+# Register your models here.
+@admin.register(Driver)
+class DriverAdmin(UserAdmin):
+    list_display = UserAdmin.list_display + ("license_number",)
+    fieldsets = UserAdmin.fieldsets + (
+        ("Additional info", {"fields": ("license_number",)}),
+    )
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ("Additional info", {"fields": ("license_number",)}),
+    )
+
+
+@admin.register(Car)
+class CarAdmin(admin.ModelAdmin):
+    search_fields = ("model", "manufacturer")
+
 
 admin.site.register(Manufacturer)
-admin.site.register(Car)
-
-@admin.register(Driver)
-class DriverAdmin(admin.ModelAdmin):
-    list_display = ['username', 'license_number']
-    fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        ('Additional info', {'fields': ('license_number',)}),
-    )
-    add_fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        ('Additional info', {'fields': ('license_number',)}),
-    )
-    search_fields = ['model']
-    list_filter = ['manufacturer__name']
